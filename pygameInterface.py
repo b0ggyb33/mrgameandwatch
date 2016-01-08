@@ -19,15 +19,22 @@ class pygameInterface(object):
 
 
         clock = pygame.time.Clock()
-        while True:
-            clock.tick(self.fps)
-            self.update()
+        done=False
+        while not done:
+            clock.tick(30)
+            done = self.update()
             #if we leave the loop tidy up all the shizzle
+        pygame.quit()
 
     def update(self):
+
+        self.renderer.update()
+        self.world.update()
+
         for event in pygame.event.get(): # User did something
             if event.type == pygame.QUIT: # If user clicked close
-                pygame.quit()
+                return True
+        return False
 
 if __name__ == "__main__":
-    pygameInterface()
+    p=pygameInterface()

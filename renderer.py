@@ -21,30 +21,28 @@ class Renderer(object):
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("MrGameAndWatch")
 
-        #for putting sprites on the main window
-        self.mainWindowGroup = pygame.sprite.OrderedUpdates()
-
-        #self.mainView = Viewport(width, height, self, b2Vec2(0, 0))
-
-        #self.mainWindowGroup.add(self.mainView)
+        self.surface = pygame.Surface(self.screen.get_size())
 
 
     def update(self):
-        self.mainWindowGroup.update()
         #draw the scene
-        dirty = self.mainWindowGroup.draw(self.screen)
-        pygame.display.update(dirty)
+        self.draw()
+        pygame.display.update()
+
         return True
 
+    def draw(self):
+        self.renderScore()
 
+        self.screen.blit(self.surface,(0,0))
 
-    def renderScore(self,screen):
+    def renderScore(self):
         fontSize=16
         font = pygame.font.Font(None,fontSize)
         position = (0,0)
-        for player in self.world.players:
-            string = "Player: "+str(player.getScore())
-            position=(position[0],position[1]+fontSize)
-            screen.blit(font.render(string,True,player.getColour()),position)
+
+        string = str(self.world.score)
+        position=(position[0],position[1]+fontSize)
+        self.surface.blit(font.render(string,True,(255,0,0)),position)
 
 
