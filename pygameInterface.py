@@ -17,7 +17,6 @@ class pygameInterface(object):
 
         self.renderer = renderer.Renderer(self.world,600, 800)
 
-
         clock = pygame.time.Clock()
         done=False
         while not done:
