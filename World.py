@@ -4,6 +4,7 @@ positions={'FLEFT':0,'LEFT':1,'MIDDLE':2,'RIGHT':3,'FRIGHT':4}
 directions={'LEFT':-1, 'RIGHT':1}
 
 import Actors
+import pygame
 
 class World(object):
     def __init__(self):
@@ -26,6 +27,7 @@ class World(object):
                 self.handleCollision(ball)
 
         self.checkBallStatus()
+
 
     def handleCollision(self,ball):
         self.increaseScore()
