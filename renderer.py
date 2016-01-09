@@ -24,9 +24,7 @@ class Renderer(object):
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("MrGameAndWatch")
 
-        self.ballColour=BLACK
         self.ballRadius=5
-        self.mgwColour=BLACK
 
         self.mgwImage = pygame.image.load(os.path.join("art","mrGameAndWatch.png"))
         mgwRight = pygame.image.load(os.path.join("art","mgw_right.png"))
@@ -41,6 +39,8 @@ class Renderer(object):
         self.surface = pygame.Surface(self.screen.get_size())
 
         self.positions={0:[],1:[],2:[]}
+        track0={0:(103,140),1:(108,110),2:(114,85),3:(126,70),4:(139,70),5:(152,85),6:(162,110),7:(171,140)}
+        self.ballPositions=[track0,{},{}]
         for name,value in World.positions.items():
             self.positions[name]=value*self.width/float(len(World.positions))
 
@@ -56,8 +56,8 @@ class Renderer(object):
     def draw(self):
         self.surface.fill(BCKGRND)
         self.renderScore()
-        self.renderBalls()
         self.renderMGW()
+        self.renderBalls()
         self.renderCrash()
 
         self.screen.blit(self.surface,(0,0))
@@ -73,8 +73,9 @@ class Renderer(object):
 
     def renderBalls(self):
         for ball in self.world.balls:
-            location=int(ball.position *self.width/float(World.positions['RIGHT']+1)) , self.height/2
-            pygame.draw.circle(self.surface,self.ballColour,location,self.ballRadius)
+            #location=int(ball.position *self.width/float(World.positions['RIGHT']+1)) , self.mgwImageLocation[1] + 26 - self.ballRadius - 100 + (abs(5-ball.position))*40
+            track = self.ballPositions[ball.track]
+            pygame.draw.circle(self.surface,BLACK,track[ball.position],self.ballRadius)
 
     def renderCrash(self):
         if self.world.crash != 0:
