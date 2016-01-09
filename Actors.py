@@ -2,9 +2,14 @@ __author__ = 'b0ggyb33'
 from World import positions,directions
 
 class Actor(object):
-    def __init__(self,limits):
+    def __init__(self,limits,initialPosition=None):
         self.limits=limits
-        self.position=positions['MIDDLE']
+        if initialPosition == directions['LEFT']:
+            self.position = positions['LEFT']
+        elif initialPosition == directions['RIGHT']:
+            self.position = positions['RIGHT']
+        else:
+            self.position=positions['MIDDLE']
         self.live=True
 
     def move(self,direction):
@@ -16,17 +21,34 @@ class Actor(object):
             return False
 
 class Ball(Actor):
-    def __init__(self,limits):
-        super(Ball,self).__init__(limits)
-        self.velocity=directions['RIGHT']
+    def __init__(self,limits,initialPosition=None,track=0):
+        super(Ball,self).__init__(limits,initialPosition)
+        if initialPosition == directions['RIGHT']:
+            self.velocity = directions['LEFT']
+        else:
+            self.velocity = directions['RIGHT']
+
+        self.track=track
+
+    def atLimit(self):
+        if self.position in self.limits:
+            return True
+        else:
+            return False
 
     def update(self):
         self.live = self.move(self.velocity)
 
+    def changeDirection(self):
+        if self.velocity == directions['LEFT']:
+            self.velocity = directions['RIGHT']
+        else:
+            self.velocity = directions['LEFT']
+
 
 class MrGameAndWatch(Actor):
-    def __init__(self,limits):
-        super(MrGameAndWatch,self).__init__(limits)
+    def __init__(self,limits,initialPosition=None):
+        super(MrGameAndWatch,self).__init__(limits,initialPosition)
 
     def update(self):
         pass

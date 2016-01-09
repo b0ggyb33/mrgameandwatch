@@ -42,6 +42,14 @@ class testActor(unittest.TestCase):
         self.move(directions['RIGHT'])
         self.assertEqual(self.getPosition(),positions['RIGHT'])
 
+    def testWhenInitialisedWithALEFTDirectionThenActorStartsAtLeftLimit(self):
+        actor = Actors.Actor((positions['LEFT'],positions['RIGHT']),directions['LEFT'])
+        self.assertEqual(actor.position,positions['LEFT'])
+
+    def testWhenInitialsedWithARIGHTDirectionThenActorStartsRight(self):
+        actor = Actors.Actor((positions['LEFT'],positions['RIGHT']),directions['RIGHT'])
+        self.assertEqual(actor.position,positions['RIGHT'])
+
 class testBall(testActor):
     def setUp(self):
         self.actor = Actors.Ball((positions['LEFT'],positions['RIGHT']))
@@ -66,3 +74,15 @@ class testBall(testActor):
         self.actor.update()
         self.assertEqual(self.actor.live,True)
 
+    def test_velocityIsSetProperlyWhenBallInitialisesAtRightLimit(self):
+        ball = Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT'])
+        self.assertEqual(ball.velocity,directions['LEFT'])
+
+    def atLimitsReturnsTrueWhenPositionIsRIGHT(self):
+        ball = Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT'])
+        self.assertTrue(ball.atLimit())
+
+    def atLimitsReturnsFalseWhenPositionIsRIGHTAndUpdate(self):
+        ball = Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT'])
+        ball.update()
+        self.assertFalse(ball.atLimit())

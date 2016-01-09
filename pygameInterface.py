@@ -20,19 +20,30 @@ class pygameInterface(object):
         clock = pygame.time.Clock()
         done=False
         while not done:
-            clock.tick(30)
+            clock.tick(1)
             done = self.update()
             #if we leave the loop tidy up all the shizzle
         pygame.quit()
 
     def update(self):
 
+
+
         self.renderer.update()
-        self.world.update()
+
+        keyPress=None
 
         for event in pygame.event.get(): # User did something
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    keyPress = World.directions['LEFT']
+                elif event.key == pygame.K_RIGHT:
+                    keyPress = World.directions['RIGHT']
             if event.type == pygame.QUIT: # If user clicked close
                 return True
+
+        self.world.update(keyPress)
+
         return False
 
 if __name__ == "__main__":

@@ -60,7 +60,7 @@ class Renderer(object):
 
     def renderBalls(self):
         for ball in self.world.balls:
-            location=int(ball.position *self.width/float(len(World.positions))) , self.height/2
+            location=int(ball.position *self.width/float(World.positions['RIGHT']+1)) , self.height/2
             pygame.draw.circle(self.surface,self.ballColour,location,self.ballRadius)
 
 
