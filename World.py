@@ -11,6 +11,7 @@ class World(object):
         self.balls=[Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT']) for i in xrange(1)]
         self.mgw = Actors.MrGameAndWatch((0,2),directions['LEFT'])
         self.score=0
+        self.speed=30
 
     def tick(self):
         self.time+=1
@@ -24,11 +25,11 @@ class World(object):
         if keyPress:
             self.mgw.move(keyPress)
 
-        [actor.update() for actor in self.balls]
-        for ball in self.balls:
-            self.handleCollision(ball)
+        if self.time%self.speed==0:
+            [actor.update() for actor in self.balls]
+            [self.handleCollision(ball) for ball in self.balls]
 
-        self.checkBallStatus()
+        return self.checkBallStatus()
 
     def handleCollision(self,ball):
         if ball.atLimit():
@@ -44,8 +45,10 @@ class World(object):
 
 
     def triggerEndGame(self):
-        pass
+        self.score = 0
 
     def checkBallStatus(self):
         if not all([ball.live for ball in self.balls]):
            self.triggerEndGame()
+           return True
+        return False
