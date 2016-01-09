@@ -3,7 +3,7 @@ import pygame
 import renderer
 import World
 
-class pygameInterface(object):
+class MrGameAndWatch(object):
     def __init__(self):
 
 
@@ -44,4 +44,4 @@ class pygameInterface(object):
         return status
 
 if __name__ == "__main__":
-    p=pygameInterface()
+    game=MrGameAndWatch()
