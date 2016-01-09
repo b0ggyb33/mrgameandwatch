@@ -5,11 +5,11 @@ class Actor(object):
     def __init__(self,limits,initialPosition=None):
         self.limits=limits
         if initialPosition == directions['LEFT']:
-            self.position = positions['LEFT']
+            self.position = self.limits[0]
         elif initialPosition == directions['RIGHT']:
-            self.position = positions['RIGHT']
+            self.position = self.limits[1]
         else:
-            self.position=positions['MIDDLE']
+            self.position=int((self.limits[0]+self.limits[1]) / 2)
         self.live=True
 
     def move(self,direction):
