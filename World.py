@@ -8,7 +8,9 @@ import Actors
 class World(object):
     def __init__(self):
         self.time = 0
-        self.balls=[Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT']) for i in xrange(1)]
+        track0Ball = Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT'],0)
+        track1Ball = Actors.Ball((positions['LEFT'],11),directions['LEFT'],1)
+        self.balls=[track0Ball,track1Ball]
         self.mgw = Actors.MrGameAndWatch((0,2),directions['LEFT'])
         self.score=0
         self.speed=30
@@ -34,14 +36,20 @@ class World(object):
 
     def handleCollision(self,ball):
         if ball.atLimit():
-                if ball.position == ball.limits[1]:
-                    if self.mgw.position == self.mgw.limits[0]:
-                        self.increaseScore()
-                        ball.changeDirection()
-                else: #lower
-                    if self.mgw.position == self.mgw.limits[1]:
-                        self.increaseScore()
-                        ball.changeDirection()
+                if ball.track == 0:
+                    if ball.position == ball.limits[1]:
+                        if self.mgw.position == self.mgw.limits[0]:
+                            self.increaseScore()
+                            ball.changeDirection()
+                    else: #lower
+                        if self.mgw.position == self.mgw.limits[1]:
+                            self.increaseScore()
+                            ball.changeDirection()
+                elif ball.track ==1:
+                        if self.mgw.position not in self.mgw.limits:
+                            self.increaseScore()
+                            ball.changeDirection()
+
 
 
 

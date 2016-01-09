@@ -40,9 +40,8 @@ class Renderer(object):
 
         self.positions={0:[],1:[],2:[]}
         track0={0:(103,140),1:(108,110),2:(114,85),3:(126,70),4:(139,70),5:(152,85),6:(162,110),7:(171,140)}
-        self.ballPositions=[track0,{},{}]
-        for name,value in World.positions.items():
-            self.positions[name]=value*self.width/float(len(World.positions))
+        track1={0:(88,140),1:(89,120),2:(94,100),3:(99,80),4:(110,60),5:(126,50),6:(145,50), 7:(160,60),8:(173,80),9:(178,100),10:(183,120),11:(184,140)}
+        self.ballPositions=[track0,track1,{}]
 
 
 
