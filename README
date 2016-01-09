@@ -1,0 +1,5 @@
+run MrGameAndWatch.py to play.
+
+TODO:
+* Fix problem that occurs when two balls land simultaneously
+* Have ball speed increase
