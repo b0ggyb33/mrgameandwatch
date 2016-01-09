@@ -1,6 +1,6 @@
 __author__ = 'b0ggyb33'
 
-positions={'FLEFT':0,'LEFT':1,'MIDDLE':2,'RIGHT':3,'FRIGHT':4}
+positions={'LEFT':0,'MIDDLE':4,'RIGHT':7}
 directions={'LEFT':-1, 'RIGHT':1}
 
 import Actors
