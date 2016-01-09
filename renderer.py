@@ -29,10 +29,18 @@ class Renderer(object):
         self.mgwColour=BLACK
 
         self.mgwImage = pygame.image.load(os.path.join("art","mrGameAndWatch.png"))
+        mgwRight = pygame.image.load(os.path.join("art","mgw_right.png"))
+        mgwLeft = pygame.image.load(os.path.join("art","mgw_left.png"))
+        mgwMiddle = pygame.image.load(os.path.join("art","mgw_middle.png"))
+        self.mgwPositions = [mgwLeft, mgwMiddle, mgwRight]
+        self.mgwImageLocation = (self.width/2 - self.mgwImage.get_width()/2,self.height - self.mgwImage.get_height())
+
+        self.crashLeft = pygame.image.load(os.path.join("art","crash_left.png"))
+        self.crashRight = pygame.image.load(os.path.join("art","crash_right.png"))
 
         self.surface = pygame.Surface(self.screen.get_size())
 
-        self.positions={}
+        self.positions={0:[],1:[],2:[]}
         for name,value in World.positions.items():
             self.positions[name]=value*self.width/float(len(World.positions))
 
@@ -50,6 +58,7 @@ class Renderer(object):
         self.renderScore()
         self.renderBalls()
         self.renderMGW()
+        self.renderCrash()
 
         self.screen.blit(self.surface,(0,0))
 
@@ -67,8 +76,17 @@ class Renderer(object):
             location=int(ball.position *self.width/float(World.positions['RIGHT']+1)) , self.height/2
             pygame.draw.circle(self.surface,self.ballColour,location,self.ballRadius)
 
+    def renderCrash(self):
+        if self.world.crash != 0:
+            #crash has occured
+            if self.world.crash>0: #RHS
+                self.surface.blit(self.crashRight,self.mgwImageLocation)
+            else:
+                self.surface.blit(self.crashLeft,self.mgwImageLocation)
 
     def renderMGW(self):
         mgw = self.world.mgw
+        mgwImageCopy = self.mgwImage.copy()
+        mgwImageCopy.blit(self.mgwPositions[mgw.position],(0,0))
 
-        self.surface.blit(self.mgwImage,(self.width/2 - self.mgwImage.get_width()/2,self.height - self.mgwImage.get_height()))
+        self.surface.blit(mgwImageCopy,self.mgwImageLocation)

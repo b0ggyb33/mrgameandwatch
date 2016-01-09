@@ -12,6 +12,7 @@ class World(object):
         self.mgw = Actors.MrGameAndWatch((0,2),directions['LEFT'])
         self.score=0
         self.speed=30
+        self.crash=0
 
     def tick(self):
         self.time+=1
@@ -44,11 +45,12 @@ class World(object):
 
 
 
-    def triggerEndGame(self):
-        self.score = 0
+    def triggerEndGame(self,direction):
+        self.crash = direction
 
     def checkBallStatus(self):
-        if not all([ball.live for ball in self.balls]):
-           self.triggerEndGame()
-           return True
+        for ball in self.balls:
+            if not ball.live:
+                self.triggerEndGame(ball.velocity)
+                return True
         return False
