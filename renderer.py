@@ -1,6 +1,9 @@
 import pygame
 import pygame.gfxdraw,pygame.rect
+import os
 import World
+BLACK = (0,0,0)
+BCKGRND = (196,211,130)
 
 class Renderer(object):
     """Handles all GUI related stuff"""
@@ -21,11 +24,12 @@ class Renderer(object):
         self.screen = pygame.display.set_mode((width, height))
         pygame.display.set_caption("MrGameAndWatch")
 
-        self.ballColour=(0,255,0)
+        self.ballColour=BLACK
         self.ballRadius=5
-        self.mgwColour=(0,0,255)
-        self.mgwWidth=16
-        self.mgwHeight=8
+        self.mgwColour=BLACK
+
+        self.mgwImage = pygame.image.load(os.path.join("art","mrGameAndWatch.png"))
+
         self.surface = pygame.Surface(self.screen.get_size())
 
         self.positions={}
@@ -42,7 +46,7 @@ class Renderer(object):
         return True
 
     def draw(self):
-        self.surface.fill((0,0,0))
+        self.surface.fill(BCKGRND)
         self.renderScore()
         self.renderBalls()
         self.renderMGW()
@@ -56,7 +60,7 @@ class Renderer(object):
 
         string = str(self.world.score)
         position=(position[0],position[1]+fontSize)
-        self.surface.blit(font.render(string,True,(255,0,0)),position)
+        self.surface.blit(font.render(string,True,BLACK),position)
 
     def renderBalls(self):
         for ball in self.world.balls:
@@ -66,5 +70,5 @@ class Renderer(object):
 
     def renderMGW(self):
         mgw = self.world.mgw
-        location=pygame.rect.Rect(int(mgw.position *self.width/float(len(World.positions))) - self.mgwWidth/2 , 3*self.height/4 - self.mgwHeight/2,self.mgwHeight,self.mgwWidth)
-        pygame.draw.ellipse(self.surface,self.mgwColour,location)
+
+        self.surface.blit(self.mgwImage,(self.width/2 - self.mgwImage.get_width()/2,self.height - self.mgwImage.get_height()))
