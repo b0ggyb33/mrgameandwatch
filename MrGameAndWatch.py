@@ -6,21 +6,18 @@ import World
 class MrGameAndWatch(object):
     def __init__(self):
 
-        self.fps=1/30.
+        self.fps=30
 
         pygame.init()
-        # Input handling
 
         self.world = World.World()
-
         self.renderer = renderer.Renderer(self.world,272, 208)
 
         clock = pygame.time.Clock()
         done=False
         while not done:
-            clock.tick(30)
+            clock.tick(self.fps)
             done = self.update()
-            #if we leave the loop tidy up all the shizzle
         pygame.quit()
 
     def update(self):
