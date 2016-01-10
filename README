@@ -4,5 +4,4 @@ Dependencies:
 * PyGame
 
 Known Issues:
-* Fix problem that occurs when two balls land simultaneously
 * Have ball speed increase
