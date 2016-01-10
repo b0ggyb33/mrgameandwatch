@@ -9,6 +9,30 @@
     "resources": {
         "media": [
             {
+                "file": "images/PBL_mgw_right.png",
+                "name": "IMAGE_MGW_RIGHT",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_mgw_left.png",
+                "name": "IMAGE_MGW_LEFT",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_mgw_middle.png",
+                "name": "IMAGE_MGW_MIDDLE",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
                 "file": "images/PBL_mrGameAndWatch.png",
                 "name": "IMAGE_BG",
                 "targetPlatforms": [
