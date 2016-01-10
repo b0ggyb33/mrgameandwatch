@@ -16,6 +16,10 @@ class World(object):
         self.score=0
         self.speed=30
         self.crash=0
+        self.timeOfLastUpdate=0
+
+        #controls 'difficulty'
+        self.updateSpeedFrequency=200
 
     def tick(self):
         self.time+=1
@@ -29,10 +33,14 @@ class World(object):
         if keyPress:
             self.mgw.move(keyPress)
 
-        if self.time%self.speed==0:
+        if self.time - self.timeOfLastUpdate >= self.speed:
             [actor.update() for actor in self.balls]
+            self.timeOfLastUpdate = self.time
 
         [self.handleCollision(ball) for ball in self.balls]
+
+        if (self.time%self.updateSpeedFrequency == 0)  and self.speed >= 1:
+            self.speed -= 1
 
         return self.checkBallStatus()
 

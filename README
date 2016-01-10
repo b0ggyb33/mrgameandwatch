@@ -3,5 +3,3 @@ run MrGameAndWatch.py to play.
 Dependencies:
 * PyGame
 
-Known Issues:
-* Have ball speed increase
