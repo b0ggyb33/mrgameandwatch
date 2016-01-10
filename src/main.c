@@ -4,8 +4,56 @@ Window *my_window;
 static GBitmap *s_background;
 static GBitmap *s_mgw_left, *s_mgw_middle, *s_mgw_right;
 
+static int currentPosition=1;
 static BitmapLayer *s_background_layer;
 static BitmapLayer *s_mgw_layer;
+
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
+{
+  if (currentPosition<2)
+  {
+    currentPosition+=1;
+  }
+  if (currentPosition==0)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_left);
+  }
+  else if (currentPosition==1)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
+  }
+  else if (currentPosition==2)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_right);
+  }
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
+{
+  if (currentPosition>0)
+  {
+    currentPosition-=1;
+  }
+  if (currentPosition==0)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_left);
+  }
+  else if (currentPosition==1)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
+  }
+  else if (currentPosition==2)
+  {
+    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_right);
+  }
+}
+
+static void click_config_provider(void *context) 
+{
+  // Register the ClickHandlers
+  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+}
 
 void handle_init(void) {
   my_window = window_create();
@@ -52,8 +100,10 @@ void handle_deinit(void) {
   bitmap_layer_destroy(s_mgw_layer);
 }
 
-int main(void) {
+int main(void) 
+{
   handle_init();
+  window_set_click_config_provider(my_window, click_config_provider);
   app_event_loop();
   handle_deinit();
 }
