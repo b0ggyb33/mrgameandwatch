@@ -1,0 +1,31 @@
+{
+    "appKeys": {},
+    "capabilities": [
+        ""
+    ],
+    "companyName": "b0ggyb33@gmail.com",
+    "longName": "template",
+    "projectType": "native",
+    "resources": {
+        "media": [
+            {
+                "file": "images/PBL_mrGameAndWatch.png",
+                "name": "IMAGE_BG",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            }
+        ]
+    },
+    "sdkVersion": "3",
+    "shortName": "template",
+    "targetPlatforms": [
+        "basalt"
+    ],
+    "uuid": "773e4473-32ba-405b-82cb-4d00c89d3f9a",
+    "versionLabel": "1.0",
+    "watchapp": {
+        "watchface": false
+    }
+}
