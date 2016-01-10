@@ -6,12 +6,10 @@ import World
 class MrGameAndWatch(object):
     def __init__(self):
 
-
         self.fps=1/30.
 
         pygame.init()
         # Input handling
-        self.keys_pressed = set()
 
         self.world = World.World()
 

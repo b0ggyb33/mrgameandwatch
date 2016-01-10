@@ -17,11 +17,12 @@ class testActor(unittest.TestCase):
         self.actor.position = newPosition
 
     def testMgwPositionIsCentre(self):
-        self.assertEqual(self.getPosition(),positions['MIDDLE'])
+        self.assertEqual(self.getPosition(),positions['LEFT']+positions['RIGHT']/2)
 
     def testMgwPositionIsLeftWhenMoved(self):
+        self.setPosition(5)
         self.move(directions['LEFT'])
-        self.assertEqual(self.getPosition(),positions['MIDDLE']-1)
+        self.assertEqual(self.getPosition(),4)
 
     def testMgwPositionIsFarLeftWhenMovedFromLeft(self):
         self.setPosition(positions['LEFT']+1)
@@ -34,8 +35,9 @@ class testActor(unittest.TestCase):
         self.assertEqual(self.getPosition(),positions['LEFT'])
 
     def testMgwCanMoveRightFromMiddle(self):
+        initialPosition = self.getPosition()
         self.move(directions['RIGHT'])
-        self.assertEqual(self.getPosition(),positions['MIDDLE']+1)
+        self.assertEqual(self.getPosition(),initialPosition+1)
 
     def testMgwCannotMoveBeyondFarRight(self):
         self.setPosition(positions['RIGHT'])
@@ -55,13 +57,15 @@ class testBall(testActor):
         self.actor = Actors.Ball((positions['LEFT'],positions['RIGHT']))
 
     def test_updateMovesBallRight(self):
+        self.setPosition(4)
         self.actor.update()
-        self.assertEqual(positions['MIDDLE']+1,self.actor.position)
+        self.assertEqual(5,self.actor.position)
 
     def test_updateMovesBallLeftWhenVelocityIsLeft(self):
+        self.setPosition(4)
         self.actor.velocity=directions['LEFT']
         self.actor.update()
-        self.assertEqual(positions['MIDDLE']-1,self.actor.position)
+        self.assertEqual(3,self.actor.position)
 
     def test_updateFromLEFTToTheLeftMovesBallAndSetsStatusToFalse(self):
         self.actor.velocity=directions['LEFT']
