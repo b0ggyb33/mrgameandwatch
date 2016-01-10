@@ -1,6 +1,5 @@
 __author__ = 'b0ggyb33'
 
-positions={'LEFT':0,'MIDDLE':4,'RIGHT':7}
 directions={'LEFT':-1, 'RIGHT':1}
 
 import Actors
@@ -8,11 +7,11 @@ import Actors
 class World(object):
     def __init__(self):
         self.time = 0
-        track0Ball = Actors.Ball((positions['LEFT'],positions['RIGHT']),directions['RIGHT'],0)
-        track1Ball = Actors.Ball((positions['LEFT'],9),directions['LEFT'],1)
-        track2Ball = Actors.Ball((positions['LEFT'],11),directions['RIGHT'],2)
+        track0Ball = Actors.Ball((0,7),directions['RIGHT'],0)
+        track1Ball = Actors.Ball((0,9),directions['LEFT'],1)
+        track2Ball = Actors.Ball((0,11),directions['RIGHT'],2)
         self.balls=[track0Ball,track1Ball,track2Ball]
-        self.mgw = Actors.MrGameAndWatch((0,2),directions['LEFT'])
+        self.mgw = Actors.MrGameAndWatch((0,2))
         self.score=0
         self.speed=30
         self.crash=0

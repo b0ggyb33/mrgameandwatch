@@ -1,5 +1,5 @@
 __author__ = 'b0ggyb33'
-from World import positions,directions
+from World import directions
 
 class Actor(object):
     def __init__(self,limits,initialPosition=None):

@@ -4,7 +4,7 @@ import unittest
 import mock
 from Actors import Ball,MrGameAndWatch
 import World
-
+positions={'LEFT':0,'RIGHT':7}
 
 
 class testWorld(unittest.TestCase):
@@ -23,13 +23,13 @@ class testWorld(unittest.TestCase):
         self.assertEqual(self.world.time,1)
 
     def test_BallUpdatesToRightInitially(self):
-        self.assertEqual(self.world.balls[0].position,World.positions['RIGHT'])
+        self.assertEqual(self.world.balls[0].position,positions['RIGHT'])
         self.updateWorld()
-        self.assertEqual(self.world.balls[0].position,World.positions['RIGHT']-1)
+        self.assertEqual(self.world.balls[0].position,positions['RIGHT']-1)
 
     def test_whenABallDiesGameEnds(self):
         self.world.triggerEndGame = mock.MagicMock(return_value=True)
-        self.setMGWposition(World.positions['RIGHT'])
+        self.setMGWposition(positions['RIGHT'])
         for i in xrange(8):
             self.assertFalse(self.world.triggerEndGame.called)
             self.updateWorld()

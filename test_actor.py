@@ -1,6 +1,7 @@
 import unittest
-from World import positions,directions
+from World import directions
 import Actors
+positions={'LEFT':0,'RIGHT':7}
 
 class testActor(unittest.TestCase):
 
