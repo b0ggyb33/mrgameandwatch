@@ -29,6 +29,7 @@ class Ball(Actor):
             self.velocity = directions['RIGHT']
 
         self.track=track
+        self.hasBeenScored=True
 
     def atLimit(self):
         if self.position in self.limits:
@@ -37,6 +38,7 @@ class Ball(Actor):
             return False
 
     def update(self):
+        self.hasBeenScored=False
         self.live = self.move(self.velocity)
 
     def changeDirection(self):

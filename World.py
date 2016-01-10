@@ -31,36 +31,35 @@ class World(object):
 
         if self.time%self.speed==0:
             [actor.update() for actor in self.balls]
-            [self.handleCollision(ball) for ball in self.balls]
+
+        [self.handleCollision(ball) for ball in self.balls]
 
         return self.checkBallStatus()
 
     def handleCollision(self,ball):
-        if ball.atLimit():
+        if not ball.hasBeenScored and ball.atLimit():
                 if ball.track == 0:
                     if ball.position == ball.limits[1]:
                         if self.mgw.position == self.mgw.limits[0]:
-                            self.increaseScore()
-                            ball.changeDirection()
+                            self.collisionEvents(ball)
                     else: #lower
                         if self.mgw.position == self.mgw.limits[1]:
-                            self.increaseScore()
-                            ball.changeDirection()
+                            self.collisionEvents(ball)
                 elif ball.track ==1:
                     if self.mgw.position not in self.mgw.limits:
-                        self.increaseScore()
-                        ball.changeDirection()
+                        self.collisionEvents(ball)
                 elif ball.track == 2:
                     if ball.position == ball.limits[1]:
                         if self.mgw.position == self.mgw.limits[1]:
-                            self.increaseScore()
-                            ball.changeDirection()
+                            self.collisionEvents(ball)
                     else: #lower
                         if self.mgw.position == self.mgw.limits[0]:
-                            self.increaseScore()
-                            ball.changeDirection()
+                            self.collisionEvents(ball)
 
-
+    def collisionEvents(self, ball):
+        self.increaseScore()
+        ball.changeDirection()
+        ball.hasBeenScored = True
 
     def triggerEndGame(self,direction):
         self.crash = direction
