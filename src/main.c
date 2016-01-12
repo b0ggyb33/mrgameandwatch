@@ -12,6 +12,10 @@ static Layer *s_ball_layer;
 static BitmapLayer *s_crash_layer;
 static MrGameAndWatch* mgw;
 
+static TextLayer *scoreLayer;
+
+static int8_t delay = 66;
+
 static int8_t buttonsEnabled = 1;
 static int game_time = 0;
 static int score=0;
@@ -30,6 +34,9 @@ static uint8_t positions1y[10] = {113, 88, 68, 48, 40, 40, 48, 68, 88, 113};
 
 static uint8_t positions2x[12] = {36, 38, 42, 46, 54, 64, 78, 88, 97, 101, 105, 108};
 static uint8_t positions2y[12] = {113, 96, 80, 64, 48, 40, 40, 48, 64, 80, 96, 113};
+
+static char str[10];
+
 void renderBalls(Layer* layer,GContext* ctx)
 {
   
@@ -64,6 +71,8 @@ void renderCrash(int8_t direction)
 void updateScore()
 {
   score += 10;
+  snprintf(str, 10,"%d", score);
+  text_layer_set_text(scoreLayer, str);
 }
 
 void collisionEvent(Ball* object)
@@ -159,7 +168,7 @@ void updateWorld()
     triggerEndGame(ball2);
   }
   
-  app_timer_register(33, updateWorld, NULL); 
+  app_timer_register(delay, updateWorld, NULL); 
   
 }
 
@@ -208,6 +217,7 @@ void handle_init(void) {
   my_window = window_create();
 
   //GRect windowBounds = GRect(0, 0, 144, 168);
+  scoreLayer = text_layer_create(GRect(0,0,60,20));  
   
   // Load the resource
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
@@ -234,14 +244,16 @@ void handle_init(void) {
   
   //set mgw based on keys TODO
   bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
-   
+  
+  text_layer_set_background_color(scoreLayer, GColorClear);
+  text_layer_set_text(scoreLayer, "0");
   
   // Add to the Window
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_background_layer));
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_mgw_layer));
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_crash_layer));
   layer_add_child(window_get_root_layer(my_window), s_ball_layer);
-  
+  layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(scoreLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
   
@@ -275,6 +287,7 @@ void handle_deinit(void) {
   bitmap_layer_destroy(s_mgw_layer);
   layer_destroy(s_ball_layer);
   bitmap_layer_destroy(s_crash_layer);
+  text_layer_destroy(scoreLayer);
     
   free(mgw);
   free(ball0);
@@ -286,7 +299,7 @@ int main(void)
 {
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
-  app_timer_register(33, updateWorld, NULL); 
+  app_timer_register(delay, updateWorld, NULL); 
   app_event_loop();
   handle_deinit();
 }
