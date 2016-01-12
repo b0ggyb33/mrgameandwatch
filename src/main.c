@@ -22,9 +22,31 @@ static int8_t updateSpeedFrequency=200; //controls 'difficulty'
   
 static Ball *ball0,*ball1,*ball2;
 
+static uint8_t positions0x[8] = {54, 57, 60, 66, 73, 80, 85, 90};
+static uint8_t positions0y[8] = {113, 88, 68, 56, 56, 68, 88, 113};
+
+static uint8_t positions1x[10] = {46, 48, 52, 58, 67, 76, 85, 91, 96, 97};
+static uint8_t positions1y[10] = {113, 88, 68, 48, 40, 40, 48, 68, 88, 113};
+
+static uint8_t positions2x[12] = {36, 38, 42, 46, 54, 64, 78, 88, 97, 101, 105, 108};
+static uint8_t positions2y[12] = {113, 96, 80, 64, 48, 40, 40, 48, 64, 80, 96, 113};
 void renderBalls(Layer* layer,GContext* ctx)
 {
-  graphics_fill_circle(ctx, GPoint(100 - ball0->position * 5,100 - ball0->position * 5), 3);
+  
+  GPoint ball0position = GPoint(positions0x[ball0->position],
+                                positions0y[ball0->position]);
+  GPoint ball1position = GPoint(positions1x[ball1->position],
+                                positions1y[ball1->position]);
+  GPoint ball2position = GPoint(positions2x[ball2->position],
+                                positions2y[ball2->position]);
+  
+  graphics_fill_circle(ctx, ball0position, 3);
+  graphics_fill_circle(ctx, ball1position, 3);
+  graphics_fill_circle(ctx, ball2position, 3);
+  
+  
+  layer_mark_dirty(layer);
+  
 }
 
 void renderCrash(int8_t direction)
