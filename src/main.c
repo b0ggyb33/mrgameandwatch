@@ -9,7 +9,17 @@ static GBitmap *s_mgw_left, *s_mgw_middle, *s_mgw_right;
 static BitmapLayer *s_background_layer;
 static BitmapLayer *s_mgw_layer;
 static MrGameAndWatch* mgw;
-//static Ball* ball0,ball1,ball2;
+
+static int game_time = 0;
+static int score=0;
+static int8_t speed=30;
+static int8_t crash=0;
+static int timeOfLastUpdate=0;
+static int8_t updateSpeedFrequency=200; //controls 'difficulty'
+  
+static Ball *ball0,*ball1,*ball2;
+
+
 
 void render_MisterGameAndWatch(MrGameAndWatch* object)
 {
@@ -84,8 +94,14 @@ void handle_init(void) {
   //initialise game objects
   mgw = malloc(sizeof(MrGameAndWatch));
   initialise_MisterGameAndWatch(mgw);
+    
+  ball0 = malloc(sizeof(Ball));
+  ball1 = malloc(sizeof(Ball));
+  ball2 = malloc(sizeof(Ball));
   
-  
+  initialise_Ball(ball0, (int8_t)0, (int8_t)7, DIRECTION_RIGHT, 0);
+  initialise_Ball(ball1, (int8_t)0, (int8_t)9, DIRECTION_LEFT, 1);
+  initialise_Ball(ball2, (int8_t)0, (int8_t)11, DIRECTION_RIGHT, 2);
   
 }
 
@@ -99,6 +115,9 @@ void handle_deinit(void) {
   bitmap_layer_destroy(s_mgw_layer);
   
   free(mgw);
+  free(ball0);
+  free(ball1);
+  free(ball2);
 }
 
 int main(void) 
