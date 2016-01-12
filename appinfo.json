@@ -9,6 +9,22 @@
     "resources": {
         "media": [
             {
+                "file": "images/PBL_crash_right.png",
+                "name": "IMAGE_CRASH_RIGHT",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_crash_left.png",
+                "name": "IMAGE_CRASH_LEFT",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
                 "file": "images/PBL_mgw_right.png",
                 "name": "IMAGE_MGW_RIGHT",
                 "targetPlatforms": [
