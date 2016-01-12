@@ -1,51 +1,42 @@
 #include <pebble.h>
+#include <src/Actors.h>
 
 Window *my_window;
 static GBitmap *s_background;
 static GBitmap *s_mgw_left, *s_mgw_middle, *s_mgw_right;
 
-static int currentPosition=1;
+//static int currentPosition=1;
 static BitmapLayer *s_background_layer;
 static BitmapLayer *s_mgw_layer;
+static MrGameAndWatch* mgw;
+//static Ball* ball0,ball1,ball2;
 
-static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
+void render_MisterGameAndWatch(MrGameAndWatch* object)
 {
-  if (currentPosition<2)
-  {
-    currentPosition+=1;
-  }
-  if (currentPosition==0)
+  if (object->position==0)
   {
     bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_left);
   }
-  else if (currentPosition==1)
+  else if (object->position==1)
   {
     bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
   }
-  else if (currentPosition==2)
+  else if (object->position==2)
   {
     bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_right);
   }
 }
 
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
+{
+  move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
+  render_MisterGameAndWatch(mgw);  
+}
+
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (currentPosition>0)
-  {
-    currentPosition-=1;
-  }
-  if (currentPosition==0)
-  {
-    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_left);
-  }
-  else if (currentPosition==1)
-  {
-    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
-  }
-  else if (currentPosition==2)
-  {
-    bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_right);
-  }
+  move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
+  render_MisterGameAndWatch(mgw);
 }
 
 static void click_config_provider(void *context) 
@@ -88,6 +79,14 @@ void handle_init(void) {
 
   
   window_stack_push(my_window, true);
+  
+  
+  //initialise game objects
+  mgw = malloc(sizeof(MrGameAndWatch));
+  initialise_MisterGameAndWatch(mgw);
+  
+  
+  
 }
 
 void handle_deinit(void) {
@@ -98,6 +97,8 @@ void handle_deinit(void) {
   gbitmap_destroy(s_mgw_right);
   bitmap_layer_destroy(s_background_layer);
   bitmap_layer_destroy(s_mgw_layer);
+  
+  free(mgw);
 }
 
 int main(void) 
