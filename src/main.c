@@ -10,6 +10,7 @@ static BitmapLayer *s_background_layer;
 static BitmapLayer *s_mgw_layer;
 static MrGameAndWatch* mgw;
 
+static int8_t buttonsEnabled = 1;
 static int game_time = 0;
 static int score=0;
 static int8_t speed=30;
@@ -19,7 +20,98 @@ static int8_t updateSpeedFrequency=200; //controls 'difficulty'
   
 static Ball *ball0,*ball1,*ball2;
 
+void updateScore()
+{
+  score += 10;
+}
 
+void collisionEvent(Ball* object)
+{
+  updateScore();
+  changeDirection(object);
+  object->hasBeenScored = 1;
+}
+
+void handleBallCollision(Ball* object)
+{
+  if (object->hasBeenScored == 0 && atLimit(object) == 1 )
+  {
+    switch(object->track)
+    {
+      case 0:
+        if ( (mgw->position == mgw->lowerLimit && object->position == object->upperLimit)
+          || (mgw->position == mgw->upperLimit && object->position == object->lowerLimit)
+           )
+        {
+          collisionEvent(object);
+        }
+      break;
+      
+      case 1:
+        if (mgw->position != mgw->lowerLimit && mgw->position != mgw->upperLimit)
+        {
+          collisionEvent(object);
+        }
+      break;
+      
+      case 2:
+        if ( (mgw->position == mgw->upperLimit && object->position == object->upperLimit)
+          || (mgw->position == mgw->lowerLimit && object->position == object->lowerLimit)
+           )
+        {
+          collisionEvent(object);
+        }
+      break;
+    }
+  }
+}
+
+void updateWorld()
+{
+  //update time
+  game_time += 1;
+  
+  //ignoring keypress as event driven
+  
+  //update ball updates
+  if (game_time - timeOfLastUpdate >= speed)
+  {
+    update(ball0);
+    update(ball1);
+    update(ball2);
+    
+    timeOfLastUpdate = game_time;
+  }
+  
+  //handle collisions
+  handleBallCollision(ball0);
+  handleBallCollision(ball1);
+  handleBallCollision(ball2);
+  
+  //handle speed increases
+  if ( (game_time%updateSpeedFrequency == 0)  && speed >= 1 )
+  {
+    speed -= 1;
+  } 
+  
+  //handle game end
+  if (!ball0->live)
+  {
+    crash=ball0->velocity;
+    buttonsEnabled=0;
+  }
+  if (!ball1->live)
+  {
+    crash=ball1->velocity;
+    buttonsEnabled=0;
+  }
+  if (!ball2->live)
+  {
+    crash=ball2->velocity;
+    buttonsEnabled=0;
+  }
+  
+}
 
 void render_MisterGameAndWatch(MrGameAndWatch* object)
 {
@@ -39,14 +131,20 @@ void render_MisterGameAndWatch(MrGameAndWatch* object)
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
-  render_MisterGameAndWatch(mgw);  
+  if (buttonsEnabled)
+  {
+    move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
+    render_MisterGameAndWatch(mgw);
+  }
 }
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
-  render_MisterGameAndWatch(mgw);
+  if (buttonsEnabled)
+  {  
+    move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
+    render_MisterGameAndWatch(mgw);
+  }
 }
 
 static void click_config_provider(void *context) 
