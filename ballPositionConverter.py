@@ -1,13 +1,42 @@
-track0={0:(103,140),1:(108,110),2:(114,85),3:(126,70),4:(139,70),5:(152,85),6:(162,110),7:(171,140)}
-track1={0:(88,140),1:(92,110),2:(100,85),3:(110,60),4:(127,50),5:(145,50),6:(162,60), 7:(173,85),8:(182,110),9:(185,140)}
-track2={0:(68,140),1:(72,120),2:(80,100),3:(88,80),4:(102,60),5:(122,50),6:(149,50), 7:(168,60),8:(184,80),9:(192,100),10:(200,120),11:(204,140)}
+track0={0:(51,128),1:(56,101),2:(60,81),3:(68,61),4:(77,61),5:(85,81),6:(88,101),7:(93,128)}
 
+track1={0:(41,128),1:(42,103),2:(48,76),3:(55,53),4:(68,43),5:(78,43),6:(86,53), 7:(94,76),8:(98,103),9:(102,128)}
 
-print "x"
-for x,y in track2.values():
-    print str(x * 144 / 272) +",",
+track2={0:(32,128),1:(32,100),2:(36,78),3:(42,54),4:(53,35),5:(66,28),6:(77,28), 7:(88,35),8:(98,54),9:(105,78),10:(110,100),11:(113,128)}
 
-print "y"
-for x,y in track2.values():
-    print str(y * 168 / 208) +",",
+import cv2
+import numpy as np
+
+balls=np.ones((168,144,3))*255
+balls[1:-1,1:-1]=(0,0,0)
+
+def drawBalls(ballPositions):
+    for x,y in ballPositions.values():
+        try:
+            balls[y,x] = (255,255,255)
+        except IndexError:
+            pass
+
+drawBalls(track0)
+drawBalls(track1)
+drawBalls(track2)
+
+    
+cv2.imwrite("balls.png",balls)
+
+def printOutPositions(ballPositions):
+    xString = "positions0x[8] = {"
+    yString = "positions0y[8] = {"
+    for x,y in ballPositions.values():
+        xString+=str(x)+","
+        yString+=str(y)+","
+    xString = xString[:-1]+"};"
+    yString = yString[:-1]+"};"
+    print xString
+    print yString
+
+printOutPositions(track0)
+printOutPositions(track1)
+printOutPositions(track2)
+
 
