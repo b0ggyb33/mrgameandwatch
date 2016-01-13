@@ -14,9 +14,9 @@ static MrGameAndWatch* mgw;
 
 static TextLayer *scoreLayer;
 
-static int8_t delay = 66;
+static int8_t delay = 33;
 
-static int8_t buttonsEnabled = 1;
+static int8_t gameInPlay = 1;
 static int game_time = 0;
 static int score=0;
 static int8_t speed=30;
@@ -39,7 +39,6 @@ static char str[10];
 
 void renderBalls(Layer* layer,GContext* ctx)
 {
-  
   GPoint ball0position = GPoint(positions0x[ball0->position],
                                 positions0y[ball0->position]);
   GPoint ball1position = GPoint(positions1x[ball1->position],
@@ -50,9 +49,6 @@ void renderBalls(Layer* layer,GContext* ctx)
   graphics_fill_circle(ctx, ball0position, 3);
   graphics_fill_circle(ctx, ball1position, 3);
   graphics_fill_circle(ctx, ball2position, 3);
-  
-  
-  layer_mark_dirty(layer);
   
 }
 
@@ -120,7 +116,7 @@ void triggerEndGame(Ball* object)
 {
   
   crash=object->velocity;
-  buttonsEnabled=0;
+  gameInPlay=0;
   
   renderCrash(crash);
   
@@ -128,6 +124,9 @@ void triggerEndGame(Ball* object)
 
 void updateWorld()
 {
+  if (!gameInPlay)
+    return;
+  
   //update time
   game_time += 1;
   
@@ -139,6 +138,7 @@ void updateWorld()
     update(ball0);
     update(ball1);
     update(ball2);
+    layer_mark_dirty(s_ball_layer); //render changes
     
     timeOfLastUpdate = game_time;
   }
@@ -190,7 +190,7 @@ void render_MisterGameAndWatch(MrGameAndWatch* object)
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (buttonsEnabled)
+  if (gameInPlay)
   {
     move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
     render_MisterGameAndWatch(mgw);
@@ -199,7 +199,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (buttonsEnabled)
+  if (gameInPlay)
   {  
     move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
     render_MisterGameAndWatch(mgw);
