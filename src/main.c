@@ -14,7 +14,7 @@ static MrGameAndWatch* mgw;
 
 static TextLayer *scoreLayer;
 
-static int8_t delay = 66;
+static int8_t delay = 50;
 
 static int8_t gameInPlay = 1;
 static int game_time = 0;
@@ -23,7 +23,7 @@ static int8_t speed=30;
 static int8_t crash=0;
 static int timeOfLastUpdate=0;
 static int timeOfLastSpeedIncrease=0;
-static int8_t updateSpeedFrequency=200; //controls 'difficulty'
+static int updateSpeedFrequency=150; //controls 'difficulty'
   
 static Ball *ball0,*ball1,*ball2;
 
