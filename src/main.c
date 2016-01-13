@@ -12,7 +12,11 @@ static Layer *s_ball_layer;
 static BitmapLayer *s_crash_layer;
 static MrGameAndWatch* mgw;
 
-static int8_t buttonsEnabled = 1;
+static TextLayer *scoreLayer;
+
+static int8_t delay = 33;
+
+static int8_t gameInPlay = 1;
 static int game_time = 0;
 static int score=0;
 static int8_t speed=30;
@@ -30,9 +34,11 @@ static uint8_t positions1y[10] = {113, 88, 68, 48, 40, 40, 48, 68, 88, 113};
 
 static uint8_t positions2x[12] = {36, 38, 42, 46, 54, 64, 78, 88, 97, 101, 105, 108};
 static uint8_t positions2y[12] = {113, 96, 80, 64, 48, 40, 40, 48, 64, 80, 96, 113};
+
+static char str[10];
+
 void renderBalls(Layer* layer,GContext* ctx)
 {
-  
   GPoint ball0position = GPoint(positions0x[ball0->position],
                                 positions0y[ball0->position]);
   GPoint ball1position = GPoint(positions1x[ball1->position],
@@ -43,9 +49,6 @@ void renderBalls(Layer* layer,GContext* ctx)
   graphics_fill_circle(ctx, ball0position, 3);
   graphics_fill_circle(ctx, ball1position, 3);
   graphics_fill_circle(ctx, ball2position, 3);
-  
-  
-  layer_mark_dirty(layer);
   
 }
 
@@ -64,6 +67,8 @@ void renderCrash(int8_t direction)
 void updateScore()
 {
   score += 10;
+  snprintf(str, 10,"%d", score);
+  text_layer_set_text(scoreLayer, str);
 }
 
 void collisionEvent(Ball* object)
@@ -111,7 +116,7 @@ void triggerEndGame(Ball* object)
 {
   
   crash=object->velocity;
-  buttonsEnabled=0;
+  gameInPlay=0;
   
   renderCrash(crash);
   
@@ -119,6 +124,9 @@ void triggerEndGame(Ball* object)
 
 void updateWorld()
 {
+  if (!gameInPlay)
+    return;
+  
   //update time
   game_time += 1;
   
@@ -130,6 +138,7 @@ void updateWorld()
     update(ball0);
     update(ball1);
     update(ball2);
+    layer_mark_dirty(s_ball_layer); //render changes
     
     timeOfLastUpdate = game_time;
   }
@@ -159,7 +168,7 @@ void updateWorld()
     triggerEndGame(ball2);
   }
   
-  app_timer_register(33, updateWorld, NULL); 
+  app_timer_register(delay, updateWorld, NULL); 
   
 }
 
@@ -181,7 +190,7 @@ void render_MisterGameAndWatch(MrGameAndWatch* object)
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (buttonsEnabled)
+  if (gameInPlay)
   {
     move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
     render_MisterGameAndWatch(mgw);
@@ -190,7 +199,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (buttonsEnabled)
+  if (gameInPlay)
   {  
     move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
     render_MisterGameAndWatch(mgw);
@@ -208,6 +217,7 @@ void handle_init(void) {
   my_window = window_create();
 
   //GRect windowBounds = GRect(0, 0, 144, 168);
+  scoreLayer = text_layer_create(GRect(0,0,60,20));  
   
   // Load the resource
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
@@ -234,14 +244,16 @@ void handle_init(void) {
   
   //set mgw based on keys TODO
   bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
-   
+  
+  text_layer_set_background_color(scoreLayer, GColorClear);
+  text_layer_set_text(scoreLayer, "0");
   
   // Add to the Window
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_background_layer));
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_mgw_layer));
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_crash_layer));
   layer_add_child(window_get_root_layer(my_window), s_ball_layer);
-  
+  layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(scoreLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
   
@@ -275,6 +287,7 @@ void handle_deinit(void) {
   bitmap_layer_destroy(s_mgw_layer);
   layer_destroy(s_ball_layer);
   bitmap_layer_destroy(s_crash_layer);
+  text_layer_destroy(scoreLayer);
     
   free(mgw);
   free(ball0);
@@ -286,7 +299,7 @@ int main(void)
 {
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
-  app_timer_register(33, updateWorld, NULL); 
+  app_timer_register(delay, updateWorld, NULL); 
   app_event_loop();
   handle_deinit();
 }
