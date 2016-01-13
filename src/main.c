@@ -14,7 +14,7 @@ static MrGameAndWatch* mgw;
 
 static TextLayer *scoreLayer;
 
-static int8_t delay = 33;
+static int8_t delay = 66;
 
 static int8_t gameInPlay = 1;
 static int game_time = 0;
@@ -22,18 +22,18 @@ static int score=0;
 static int8_t speed=30;
 static int8_t crash=0;
 static int timeOfLastUpdate=0;
+static int timeOfLastSpeedIncrease=0;
 static int8_t updateSpeedFrequency=200; //controls 'difficulty'
   
 static Ball *ball0,*ball1,*ball2;
 
-static uint8_t positions0x[8] = {54, 57, 60, 66, 73, 80, 85, 90};
-static uint8_t positions0y[8] = {113, 88, 68, 56, 56, 68, 88, 113};
+static uint8_t positions0x[8] = {51,56,60,68,77,85,88,93};
+static uint8_t positions0y[8] = {128,101,81,61,61,81,101,128};
+static uint8_t positions1x[10] = {41,42,48,55,68,78,86,94,98,102};
+static uint8_t positions1y[10] = {128,103,76,53,43,43,53,76,103,128};
+static uint8_t positions2x[12] = {32,32,36,42,53,66,77,88,98,105,110,113};
+static uint8_t positions2y[12] = {128,100,78,54,35,28,28,35,54,78,100,128};
 
-static uint8_t positions1x[10] = {46, 48, 52, 58, 67, 76, 85, 91, 96, 97};
-static uint8_t positions1y[10] = {113, 88, 68, 48, 40, 40, 48, 68, 88, 113};
-
-static uint8_t positions2x[12] = {36, 38, 42, 46, 54, 64, 78, 88, 97, 101, 105, 108};
-static uint8_t positions2y[12] = {113, 96, 80, 64, 48, 40, 40, 48, 64, 80, 96, 113};
 
 static char str[10];
 
@@ -149,9 +149,10 @@ void updateWorld()
   handleBallCollision(ball2);
   
   //handle speed increases
-  if ( (game_time%updateSpeedFrequency == 0)  && speed >= 1 )
+  if ( (game_time - timeOfLastSpeedIncrease >= updateSpeedFrequency)  && speed >= 1 )
   {
     speed -= 1;
+    timeOfLastSpeedIncrease = game_time;
   } 
   
   //handle game end
