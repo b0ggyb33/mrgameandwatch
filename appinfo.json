@@ -3,11 +3,19 @@
     "capabilities": [
         ""
     ],
-    "companyName": "b0ggyb33@gmail.com",
-    "longName": "Game and Watch Ball",
+    "companyName": "b0ggyb33",
+    "longName": "Game & Watch: Ball",
     "projectType": "native",
     "resources": {
         "media": [
+            {
+                "file": "images/G_W_Pebble_Store_image_sm.png",
+                "name": "IMAGE_LOGO",
+                "targetPlatforms": [
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
             {
                 "file": "images/PBL_crash_right.png",
                 "name": "IMAGE_CRASH_RIGHT",
@@ -59,7 +67,7 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "Game&Watch: Ball",
+    "shortName": "G&W: Ball",
     "targetPlatforms": [
         "basalt"
     ],

@@ -1,5 +1,6 @@
 #include <pebble.h>
 #include <src/Actors.h>
+#include "main.h"
 
 Window *my_window;
 static GBitmap *s_background;
@@ -13,17 +14,22 @@ static BitmapLayer *s_crash_layer;
 static MrGameAndWatch* mgw;
 
 static TextLayer *scoreLayer;
+static TextLayer *highScoreLayer;
 
 static int8_t delay = 50;
+static int updateSpeedFrequency=150; //controls 'difficulty'
 
 static int8_t gameInPlay = 1;
 static int game_time = 0;
 static int score=0;
+static int highScore=20;
+static char scoreString[10];
+static char highScoreString[10];
 static int8_t speed=30;
 static int8_t crash=0;
 static int timeOfLastUpdate=0;
 static int timeOfLastSpeedIncrease=0;
-static int updateSpeedFrequency=150; //controls 'difficulty'
+
   
 static Ball *ball0,*ball1,*ball2;
 
@@ -35,7 +41,7 @@ static uint8_t positions2x[12] = {32,32,36,42,53,66,77,88,98,105,110,113};
 static uint8_t positions2y[12] = {128,100,78,54,35,28,28,35,54,78,100,128};
 
 
-static char str[10];
+
 
 void renderBalls(Layer* layer,GContext* ctx)
 {
@@ -67,8 +73,14 @@ void renderCrash(int8_t direction)
 void updateScore()
 {
   score += 10;
-  snprintf(str, 10,"%d", score);
-  text_layer_set_text(scoreLayer, str);
+  snprintf(scoreString, 10,"%d", score);
+  text_layer_set_text(scoreLayer, scoreString);
+  
+  if (score>=highScore)
+  {
+    highScore=score;
+    text_layer_set_text(highScoreLayer, scoreString);
+  }
 }
 
 void collisionEvent(Ball* object)
@@ -117,7 +129,7 @@ void triggerEndGame(Ball* object)
   
   crash=object->velocity;
   gameInPlay=0;
-  
+  persist_write_int(0, highScore);
   renderCrash(crash);
   
 }
@@ -189,6 +201,24 @@ void render_MisterGameAndWatch(MrGameAndWatch* object)
   }
 }
 
+static void reset_game_handler(ClickRecognizerRef recognizer, void *context)
+{
+  if (!gameInPlay)
+  {
+    handle_deinit();
+    
+    gameInPlay = 1;
+    game_time = 0;
+    score=0;
+    speed=30;
+    crash=0;
+    timeOfLastUpdate=0;
+    timeOfLastSpeedIncrease=0;
+    handle_init();
+    updateWorld();
+  }
+}
+
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
   if (gameInPlay)
@@ -210,15 +240,27 @@ static void down_click_handler(ClickRecognizerRef recognizer, void *context)
 static void click_config_provider(void *context) 
 {
   // Register the ClickHandlers
-  window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+  window_single_click_subscribe(BUTTON_ID_SELECT, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
+  //window_single_click_subscribe(BUTTON_ID_UP, reset_game_handler);
 }
 
 void handle_init(void) {
   my_window = window_create();
 
+  if (persist_exists(0)) //persist 0 is key for high score
+  {
+    highScore = persist_read_int(0);
+  }
+  else
+  {
+    highScore=0;
+  }
+  
+  
   //GRect windowBounds = GRect(0, 0, 144, 168);
-  scoreLayer = text_layer_create(GRect(0,0,60,20));  
+  scoreLayer = text_layer_create(GRect(0,0,60,20));
+  highScoreLayer = text_layer_create(GRect(144-30,0,30,20));  
   
   // Load the resource
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
@@ -247,7 +289,10 @@ void handle_init(void) {
   bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
   
   text_layer_set_background_color(scoreLayer, GColorClear);
+  text_layer_set_background_color(highScoreLayer, GColorClear);
   text_layer_set_text(scoreLayer, "0");
+  snprintf(highScoreString, 10,"%d", highScore);
+  text_layer_set_text(highScoreLayer, highScoreString);
   
   // Add to the Window
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_background_layer));
@@ -255,6 +300,7 @@ void handle_init(void) {
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_crash_layer));
   layer_add_child(window_get_root_layer(my_window), s_ball_layer);
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(scoreLayer));
+  layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(highScoreLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
   
@@ -276,7 +322,8 @@ void handle_init(void) {
   
 }
 
-void handle_deinit(void) {
+void handle_deinit(void) 
+{
   window_destroy(my_window);
   gbitmap_destroy(s_background);
   gbitmap_destroy(s_mgw_middle);
@@ -289,6 +336,7 @@ void handle_deinit(void) {
   layer_destroy(s_ball_layer);
   bitmap_layer_destroy(s_crash_layer);
   text_layer_destroy(scoreLayer);
+  text_layer_destroy(highScoreLayer);
     
   free(mgw);
   free(ball0);
