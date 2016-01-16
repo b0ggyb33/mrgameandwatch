@@ -2,6 +2,12 @@
 #include <src/Actors.h>
 #include "main.h"
 
+#ifdef PBL_COLOR
+  #define BACKGROUND_COLOUR GColorLimerick
+#else
+  #define BACKGROUND_COLOUR GColorWhite  
+#endif
+
 Window *my_window;
 static GBitmap *s_background;
 static GBitmap *s_mgw_left, *s_mgw_middle, *s_mgw_right;
@@ -271,7 +277,7 @@ void handle_init(void) {
   s_crash_right = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_CRASH_RIGHT);
   
   // Create the BitmapLayer
-  window_set_background_color(my_window,GColorLimerick);
+  window_set_background_color(my_window,BACKGROUND_COLOUR);
   s_background_layer = bitmap_layer_create(GRect(0, 168-51, 144, 51));
   s_ball_layer = layer_create(GRect(0, 0, 144, 168)); 
   s_mgw_layer = bitmap_layer_create(GRect(0, 168-51, 144, 51));
@@ -319,6 +325,7 @@ void handle_init(void) {
   initialise_Ball(ball1, (int8_t)0, (int8_t)9, DIRECTION_LEFT, 1);
   initialise_Ball(ball2, (int8_t)0, (int8_t)11, DIRECTION_RIGHT, 2);
   
+  light_enable(true);
   
 }
 
@@ -342,6 +349,8 @@ void handle_deinit(void)
   free(ball0);
   free(ball1);
   free(ball2);
+  
+  light_enable(false);
 }
 
 int main(void) 
