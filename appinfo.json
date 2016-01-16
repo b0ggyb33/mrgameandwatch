@@ -10,8 +10,10 @@
         "media": [
             {
                 "file": "images/G_W_Pebble_Store_image_sm.png",
+                "menuIcon": true,
                 "name": "IMAGE_LOGO",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -20,6 +22,7 @@
                 "file": "images/PBL_crash_right.png",
                 "name": "IMAGE_CRASH_RIGHT",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -28,6 +31,7 @@
                 "file": "images/PBL_crash_left.png",
                 "name": "IMAGE_CRASH_LEFT",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -36,6 +40,7 @@
                 "file": "images/PBL_mgw_right.png",
                 "name": "IMAGE_MGW_RIGHT",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -44,6 +49,7 @@
                 "file": "images/PBL_mgw_left.png",
                 "name": "IMAGE_MGW_LEFT",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -52,6 +58,7 @@
                 "file": "images/PBL_mgw_middle.png",
                 "name": "IMAGE_MGW_MIDDLE",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -60,6 +67,7 @@
                 "file": "images/PBL_mrGameAndWatch.png",
                 "name": "IMAGE_BG",
                 "targetPlatforms": [
+                    "aplite",
                     "basalt"
                 ],
                 "type": "bitmap"
@@ -69,10 +77,11 @@
     "sdkVersion": "3",
     "shortName": "G&W: Ball",
     "targetPlatforms": [
+        "aplite",
         "basalt"
     ],
     "uuid": "773e4473-32ba-405b-82cb-4d00c89d3f9a",
-    "versionLabel": "1.0",
+    "versionLabel": "1.1",
     "watchapp": {
         "watchface": false
     }
