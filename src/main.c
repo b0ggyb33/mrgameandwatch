@@ -1,6 +1,7 @@
 #include <pebble.h>
 #include <src/Actors.h>
 #include "main.h"
+#include "JavascriptInterface.h"
 
 #ifdef PBL_COLOR
   #define BACKGROUND_COLOUR GColorLimerick
@@ -137,6 +138,7 @@ void triggerEndGame(Ball* object)
   gameInPlay=0;
   persist_write_int(0, highScore);
   renderCrash(crash);
+  sendScore(score);
   
 }
 
@@ -251,7 +253,13 @@ static void click_config_provider(void *context)
   //window_single_click_subscribe(BUTTON_ID_UP, reset_game_handler);
 }
 
-void handle_init(void) {
+void handle_init(void) 
+{
+  
+  app_message_register_outbox_failed(outbox_failed_callback);
+  app_message_register_outbox_sent(outbox_sent_callback);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  
   my_window = window_create();
 
   if (persist_exists(0)) //persist 0 is key for high score
@@ -355,6 +363,10 @@ void handle_deinit(void)
 
 int main(void) 
 {
+  
+  
+  // Open AppMessage
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
   app_timer_register(delay, updateWorld, NULL); 
