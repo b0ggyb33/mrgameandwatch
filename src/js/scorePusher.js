@@ -1,4 +1,6 @@
 
+r = require('rethinkdb');
+
 var xhrRequest = function (url, type, score, callback) 
 {
   var xhr = new XMLHttpRequest();
