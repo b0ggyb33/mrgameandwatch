@@ -130,7 +130,7 @@ void triggerEndGame(Ball* object)
   game->gameInPlay=0;
   persist_write_int(0, game->highScore);
   renderCrash(game->crash); 
-  sendScore(score);
+  sendScore(game->score);
 }
 
 void updateWorld()
