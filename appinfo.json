@@ -9,9 +9,35 @@
     "resources": {
         "media": [
             {
-                "file": "images/G_W_Pebble_Store_image_sm.png",
-                "menuIcon": true,
-                "name": "IMAGE_LOGO",
+                "file": "images/PBL_mrGameAndWatch.png",
+                "name": "IMAGE_BG",
+                "targetPlatforms": [
+                    "aplite",
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_mgw_right.png",
+                "name": "IMAGE_MGW_RIGHT",
+                "targetPlatforms": [
+                    "aplite",
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_mgw_middle.png",
+                "name": "IMAGE_MGW_MIDDLE",
+                "targetPlatforms": [
+                    "aplite",
+                    "basalt"
+                ],
+                "type": "bitmap"
+            },
+            {
+                "file": "images/PBL_mgw_left.png",
+                "name": "IMAGE_MGW_LEFT",
                 "targetPlatforms": [
                     "aplite",
                     "basalt"
@@ -37,35 +63,9 @@
                 "type": "bitmap"
             },
             {
-                "file": "images/PBL_mgw_right.png",
-                "name": "IMAGE_MGW_RIGHT",
-                "targetPlatforms": [
-                    "aplite",
-                    "basalt"
-                ],
-                "type": "bitmap"
-            },
-            {
-                "file": "images/PBL_mgw_left.png",
-                "name": "IMAGE_MGW_LEFT",
-                "targetPlatforms": [
-                    "aplite",
-                    "basalt"
-                ],
-                "type": "bitmap"
-            },
-            {
-                "file": "images/PBL_mgw_middle.png",
-                "name": "IMAGE_MGW_MIDDLE",
-                "targetPlatforms": [
-                    "aplite",
-                    "basalt"
-                ],
-                "type": "bitmap"
-            },
-            {
-                "file": "images/PBL_mrGameAndWatch.png",
-                "name": "IMAGE_BG",
+                "file": "images/G_W_Pebble_Store_image_sm.png",
+                "menuIcon": true,
+                "name": "IMAGE_LOGO",
                 "targetPlatforms": [
                     "aplite",
                     "basalt"

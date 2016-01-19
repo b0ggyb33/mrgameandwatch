@@ -2,6 +2,7 @@
 #include <src/Actors.h>
 #include "main.h"
 #include "JavascriptInterface.h"
+#include "Game.h"
 
 #ifdef PBL_COLOR
   #define BACKGROUND_COLOUR GColorLimerick
@@ -23,20 +24,10 @@ static MrGameAndWatch* mgw;
 static TextLayer *scoreLayer;
 static TextLayer *highScoreLayer;
 
-static int8_t delay = 50;
-static int updateSpeedFrequency=150; //controls 'difficulty'
-
-static int8_t gameInPlay = 1;
-static int game_time = 0;
-static int score=0;
-static int highScore=20;
 static char scoreString[10];
 static char highScoreString[10];
-static int8_t speed=30;
-static int8_t crash=0;
-static int timeOfLastUpdate=0;
-static int timeOfLastSpeedIncrease=0;
 
+static GameState *game;
   
 static Ball *ball0,*ball1,*ball2;
 
@@ -46,9 +37,6 @@ static uint8_t positions1x[10] = {41,42,48,55,68,78,86,94,98,102};
 static uint8_t positions1y[10] = {128,103,76,53,43,43,53,76,103,128};
 static uint8_t positions2x[12] = {32,32,36,42,53,66,77,88,98,105,110,113};
 static uint8_t positions2y[12] = {128,100,78,54,35,28,28,35,54,78,100,128};
-
-
-
 
 void renderBalls(Layer* layer,GContext* ctx)
 {
@@ -79,13 +67,13 @@ void renderCrash(int8_t direction)
 
 void updateScore()
 {
-  score += 10;
-  snprintf(scoreString, 10,"%d", score);
+  game->score += 10;
+  snprintf(scoreString, 10,"%d", game->score);
   text_layer_set_text(scoreLayer, scoreString);
   
-  if (score>=highScore)
+  if (game->score>=game->highScore)
   {
-    highScore=score;
+    game->highScore=game->score;
     text_layer_set_text(highScoreLayer, scoreString);
   }
 }
@@ -133,34 +121,32 @@ void handleBallCollision(Ball* object)
 
 void triggerEndGame(Ball* object)
 {
-  
-  crash=object->velocity;
-  gameInPlay=0;
-  persist_write_int(0, highScore);
-  renderCrash(crash);
+  game->crash=object->velocity;
+  game->gameInPlay=0;
+  persist_write_int(0, game->highScore);
+  renderCrash(game->crash); 
   sendScore(score);
-  
 }
 
 void updateWorld()
 {
-  if (!gameInPlay)
+  if (!game->gameInPlay)
     return;
   
   //update time
-  game_time += 1;
+  game->game_time += 1;
   
   //ignoring keypress as event driven
   
   //update ball updates
-  if (game_time - timeOfLastUpdate >= speed)
+  if (game->game_time - game->timeOfLastUpdate >= game->speed)
   {
     update(ball0);
     update(ball1);
     update(ball2);
     layer_mark_dirty(s_ball_layer); //render changes
     
-    timeOfLastUpdate = game_time;
+    game->timeOfLastUpdate = game->game_time;
   }
   
   //handle collisions
@@ -169,10 +155,10 @@ void updateWorld()
   handleBallCollision(ball2);
   
   //handle speed increases
-  if ( (game_time - timeOfLastSpeedIncrease >= updateSpeedFrequency)  && speed >= 1 )
+  if ( (game->game_time - game->timeOfLastSpeedIncrease >= game->updateSpeedFrequency)  && game->speed >= 1 )
   {
-    speed -= 1;
-    timeOfLastSpeedIncrease = game_time;
+    game->speed -= 1;
+    game->timeOfLastSpeedIncrease = game->game_time;
   } 
   
   //handle game end
@@ -189,7 +175,7 @@ void updateWorld()
     triggerEndGame(ball2);
   }
   
-  app_timer_register(delay, updateWorld, NULL); 
+  app_timer_register(game->delay, updateWorld, NULL); 
   
 }
 
@@ -211,17 +197,9 @@ void render_MisterGameAndWatch(MrGameAndWatch* object)
 
 static void reset_game_handler(ClickRecognizerRef recognizer, void *context)
 {
-  if (!gameInPlay)
+  if (!game->gameInPlay)
   {
     handle_deinit();
-    
-    gameInPlay = 1;
-    game_time = 0;
-    score=0;
-    speed=30;
-    crash=0;
-    timeOfLastUpdate=0;
-    timeOfLastSpeedIncrease=0;
     handle_init();
     updateWorld();
   }
@@ -229,7 +207,7 @@ static void reset_game_handler(ClickRecognizerRef recognizer, void *context)
 
 static void up_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (gameInPlay)
+  if (game->gameInPlay)
   {
     move_MisterGameAndWatch(mgw, DIRECTION_RIGHT);
     render_MisterGameAndWatch(mgw);
@@ -238,7 +216,7 @@ static void up_click_handler(ClickRecognizerRef recognizer, void *context)
 
 static void down_click_handler(ClickRecognizerRef recognizer, void *context) 
 {
-  if (gameInPlay)
+  if (game->gameInPlay)
   {  
     move_MisterGameAndWatch(mgw, DIRECTION_LEFT);
     render_MisterGameAndWatch(mgw);
@@ -254,23 +232,14 @@ static void click_config_provider(void *context)
 }
 
 void handle_init(void) 
-{
-  
+{ 
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
-  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   
   my_window = window_create();
 
-  if (persist_exists(0)) //persist 0 is key for high score
-  {
-    highScore = persist_read_int(0);
-  }
-  else
-  {
-    highScore=0;
-  }
-  
+  game = malloc(sizeof(GameState));
+  initialiseGameState(game);
   
   //GRect windowBounds = GRect(0, 0, 144, 168);
   scoreLayer = text_layer_create(GRect(0,0,60,20));
@@ -298,14 +267,13 @@ void handle_init(void)
   
   bitmap_layer_set_bitmap(s_background_layer, s_background);
   
-  
-  //set mgw based on keys TODO
+  //set mgw based on keys
   bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
   
   text_layer_set_background_color(scoreLayer, GColorClear);
   text_layer_set_background_color(highScoreLayer, GColorClear);
   text_layer_set_text(scoreLayer, "0");
-  snprintf(highScoreString, 10,"%d", highScore);
+  snprintf(highScoreString, 10,"%d", game->highScore);
   text_layer_set_text(highScoreLayer, highScoreString);
   
   // Add to the Window
@@ -317,7 +285,6 @@ void handle_init(void)
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(highScoreLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
-  
   window_stack_push(my_window, true);
   
   
@@ -357,19 +324,17 @@ void handle_deinit(void)
   free(ball0);
   free(ball1);
   free(ball2);
+  free(game);
   
   light_enable(false);
 }
 
 int main(void) 
-{
-  
-  
-  // Open AppMessage
+{  
   app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
-  app_timer_register(delay, updateWorld, NULL); 
+  app_timer_register(game->delay, updateWorld, NULL); 
   app_event_loop();
   handle_deinit();
 }
