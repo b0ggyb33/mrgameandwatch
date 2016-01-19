@@ -65,17 +65,22 @@ void renderCrash(int8_t direction)
   }
 }
 
+void renderScores()
+{
+  snprintf(scoreString, 10,"%d", game->score);
+  text_layer_set_text(scoreLayer, scoreString);
+  snprintf(highScoreString, 10,"%d", game->highScore);
+  text_layer_set_text(highScoreLayer, highScoreString);
+}
+
 void updateScore()
 {
   game->score += 10;
-  snprintf(scoreString, 10,"%d", game->score);
-  text_layer_set_text(scoreLayer, scoreString);
-  
-  if (game->score>=game->highScore)
+  if (game->score >= game->highScore)
   {
     game->highScore=game->score;
-    text_layer_set_text(highScoreLayer, scoreString);
   }
+  renderScores();
 }
 
 void collisionEvent(Ball* object)
@@ -145,7 +150,6 @@ void updateWorld()
     update(ball1);
     update(ball2);
     layer_mark_dirty(s_ball_layer); //render changes
-    
     game->timeOfLastUpdate = game->game_time;
   }
   
@@ -241,11 +245,13 @@ void handle_init(void)
   game = malloc(sizeof(GameState));
   initialiseGameState(game);
   
-  //GRect windowBounds = GRect(0, 0, 144, 168);
+  // initialise score layers
   scoreLayer = text_layer_create(GRect(0,0,60,20));
   highScoreLayer = text_layer_create(GRect(144-30,0,30,20));  
+  text_layer_set_background_color(scoreLayer, GColorClear);
+  text_layer_set_background_color(highScoreLayer, GColorClear);
   
-  // Load the resource
+  // Load the images
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
   s_mgw_left = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MGW_LEFT);
   s_mgw_middle = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_MGW_MIDDLE);
@@ -270,11 +276,7 @@ void handle_init(void)
   //set mgw based on keys
   bitmap_layer_set_bitmap(s_mgw_layer, s_mgw_middle);
   
-  text_layer_set_background_color(scoreLayer, GColorClear);
-  text_layer_set_background_color(highScoreLayer, GColorClear);
-  text_layer_set_text(scoreLayer, "0");
-  snprintf(highScoreString, 10,"%d", game->highScore);
-  text_layer_set_text(highScoreLayer, highScoreString);
+  renderScores();
   
   // Add to the Window
   layer_add_child(window_get_root_layer(my_window), bitmap_layer_get_layer(s_background_layer));
