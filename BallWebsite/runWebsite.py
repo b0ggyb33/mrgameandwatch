@@ -1,7 +1,6 @@
-from flask import Flask, request,jsonify
+from flask import Flask, request,jsonify,render_template
 
 import rethinkdb as r
-import tabulate
 
 
 app = Flask(__name__)
@@ -9,15 +8,9 @@ app = Flask(__name__)
 @app.route("/")
 def hello():
     r.connect().repl()
-    results = r.table("authors").filter(r.row["username"]=="xyz").order_by(r.desc("score")).limit(3).run()
+    results = r.table("authors").order_by(r.desc("score")).limit(10).run()
 
-    resultsList=[["Name","Score"]]
-    for result in results:
-        resultsList.append([result['username'],result['score']])
-
-
-
-    return str(tabulate.tabulate(resultsList,headers="firstrow"))
+    return render_template('highScores.html', scores=results)
 
 
 @app.route('/json', methods=['POST'])
