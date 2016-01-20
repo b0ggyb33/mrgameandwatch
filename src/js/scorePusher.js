@@ -17,29 +17,24 @@ var xhrRequest = function (url, type, score, callback)
   xhr.setRequestHeader("Content-Type", "application/json");
   xhr.send(JSON.stringify(
     {
-      "id": "kennedytown-1395203",
+      "username": Pebble.getWatchToken(),
       "time": "2015-05-25T08:42:00Z",
-      "score" : score,
-      "layout": 
-      {
-        "type": "genericPin",
-        "title": "Last train at 11:40 PM out of Kennedy Town",
-        "tinyIcon": "system://images/SCHEDULED_EVENT"
-      }
+      "score" : score
     }
   ))
 };
 
 function sendScore(score) 
 {
+  console.log(Pebble.getWatchToken())
   var scoreToPush = score[0];
   console.log(scoreToPush);
   
   // Construct URL
-  var url = "http://b0ggyb33.co.uk/hello.json"; 
+  var url = "http://b0ggyb33.co.uk:5000/json";//"http://b0ggyb33.co.uk/hello.json"; 
   
   // Push request to url
-  xhrRequest(url, 'PUT', scoreToPush,
+  xhrRequest(url, 'POST', scoreToPush,
     function(responseText) 
     {
       console.log("Response:");
