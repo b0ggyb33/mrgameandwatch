@@ -23,11 +23,15 @@ static MrGameAndWatch* mgw;
 
 static TextLayer *scoreLayer;
 static TextLayer *highScoreLayer;
+static TextLayer *nameLayer;
 
 static char scoreString[10];
 static char highScoreString[10];
+static char friendlyNameString[60];
 
 static GameState *game;
+
+
   
 static Ball *ball0,*ball1,*ball2;
 
@@ -37,6 +41,24 @@ static uint8_t positions1x[10] = {41,42,48,55,68,78,86,94,98,102};
 static uint8_t positions1y[10] = {128,103,76,53,43,43,53,76,103,128};
 static uint8_t positions2x[12] = {32,32,36,42,53,66,77,88,98,105,110,113};
 static uint8_t positions2y[12] = {128,100,78,54,35,28,28,35,54,78,100,128};
+
+static void inbox_received_callback(DictionaryIterator *iterator, void *context) 
+{
+  
+  Tuple *data = dict_find(iterator, 0);
+  
+  if (data)
+  {
+    snprintf(friendlyNameString, 60, "%s",data->value->cstring);
+    APP_LOG(APP_LOG_LEVEL_INFO, "friendlyNameString set");
+    APP_LOG(APP_LOG_LEVEL_INFO, "%s", data->value->cstring);
+  }
+  else
+  {
+    APP_LOG(APP_LOG_LEVEL_ERROR, "friendlyNameString not set");
+  }
+  
+}
 
 void renderBalls(Layer* layer,GContext* ctx)
 {
@@ -131,6 +153,7 @@ void triggerEndGame(Ball* object)
   persist_write_int(0, game->highScore);
   renderCrash(game->crash); 
   sendScore(game->score);
+  text_layer_set_text(nameLayer, friendlyNameString);
 }
 
 void updateWorld()
@@ -239,6 +262,7 @@ void handle_init(void)
 { 
   app_message_register_outbox_failed(outbox_failed_callback);
   app_message_register_outbox_sent(outbox_sent_callback);
+  app_message_register_inbox_received(inbox_received_callback);
   
   my_window = window_create();
 
@@ -248,8 +272,10 @@ void handle_init(void)
   // initialise score layers
   scoreLayer = text_layer_create(GRect(0,0,60,20));
   highScoreLayer = text_layer_create(GRect(144-30,0,30,20));  
+  nameLayer = text_layer_create(GRect(0,20,160,20));
   text_layer_set_background_color(scoreLayer, GColorClear);
   text_layer_set_background_color(highScoreLayer, GColorClear);
+  text_layer_set_background_color(nameLayer, GColorClear);
   
   // Load the images
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
@@ -285,6 +311,7 @@ void handle_init(void)
   layer_add_child(window_get_root_layer(my_window), s_ball_layer);
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(scoreLayer));
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(highScoreLayer));
+  layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(nameLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
   window_stack_push(my_window, true);
@@ -321,6 +348,7 @@ void handle_deinit(void)
   bitmap_layer_destroy(s_crash_layer);
   text_layer_destroy(scoreLayer);
   text_layer_destroy(highScoreLayer);
+  text_layer_destroy(nameLayer);
     
   free(mgw);
   free(ball0);
@@ -333,7 +361,7 @@ void handle_deinit(void)
 
 int main(void) 
 {  
-  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  app_message_open(APP_MESSAGE_INBOX_SIZE_MINIMUM, APP_MESSAGE_OUTBOX_SIZE_MINIMUM);
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
   app_timer_register(game->delay, updateWorld, NULL); 

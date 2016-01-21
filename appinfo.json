@@ -1,5 +1,7 @@
 {
-    "appKeys": {},
+    "appKeys": {
+        "KEY_FRIENDLY": 0
+    },
     "capabilities": [
         ""
     ],

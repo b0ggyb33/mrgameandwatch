@@ -24,3 +24,4 @@ void sendScore(int score)
   app_message_outbox_send();
   
 }
+
