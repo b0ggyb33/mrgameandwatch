@@ -89,9 +89,9 @@ void renderCrash(int8_t direction)
 
 void renderScores()
 {
-  snprintf(scoreString, 10,"%d", game->score);
+  snprintf(scoreString, 10,"%u", (unsigned int)game->score);
   text_layer_set_text(scoreLayer, scoreString);
-  snprintf(highScoreString, 10,"%d", game->highScore);
+  snprintf(highScoreString, 10,"%u", (unsigned int)game->highScore);
   text_layer_set_text(highScoreLayer, highScoreString);
 }
 
@@ -361,7 +361,7 @@ void handle_deinit(void)
 
 int main(void) 
 {  
-  app_message_open(APP_MESSAGE_INBOX_SIZE_MINIMUM, APP_MESSAGE_OUTBOX_SIZE_MINIMUM);
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
   handle_init();
   window_set_click_config_provider(my_window, click_config_provider);
   app_timer_register(game->delay, updateWorld, NULL); 
