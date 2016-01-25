@@ -7,6 +7,7 @@ var xhrRequest = function (url, type, scoreToPush, callback)
   
   var json = JSON.stringify(
     {
+      type: "score",
       username: tokenToPush,
       score : scoreToPush
     }
@@ -35,6 +36,7 @@ var xhrRequestForUsername = function (url, type, callback)
   var tokenToPush = Pebble.getWatchToken();
   var json = JSON.stringify(
     {
+      type: "username",
       username: tokenToPush
     }
   );
@@ -57,12 +59,18 @@ var xhrRequestForUsername = function (url, type, callback)
 
 function sendScore(score) 
 {
-  var scoreToPush = score[0];
+  var scoreToPush = score.KEY_SCORE;
   console.log("score: ");
   console.log(scoreToPush);
   
+  if (typeof scoreToPush === undefined || scoreToPush === null)
+  {
+    console.log("undefined score!");
+    return;
+  }
+  
   // Construct URL
-  var url = "http://127.0.0.1:5000/json";
+  var url = "http://86.12.100.145:5000/json";
   
   // Push request to url
   xhrRequest(url, 'POST', scoreToPush,
@@ -75,9 +83,9 @@ function sendScore(score)
 }
 function getUserName()
 {
-  var url = "http://127.0.0.1:5000/json"; 
+  var url = "http://86.12.100.145:5000/json"; 
   // Push request to url
-  xhrRequestForUsername(url, 'GET',
+  xhrRequestForUsername(url, 'POST',
     function(responseText) 
     {
       console.log("Response from server:");
@@ -114,6 +122,7 @@ Pebble.addEventListener('ready',
 Pebble.addEventListener('appmessage',
   function(e) {
     console.log("AppMessage received! Score ready to submit");
+    console.log(JSON.stringify(e.payload));
     sendScore(e.payload);
   }                     
 );
