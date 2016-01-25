@@ -1,18 +1,23 @@
 
 
-var xhrRequest = function (url, type, score, callback) 
+var xhrRequest = function (url, type, scoreToPush, callback) 
 {
   var xhr = new XMLHttpRequest();
+  var tokenToPush = Pebble.getWatchToken();
+  
   var json = JSON.stringify(
     {
-      username: Pebble.getWatchToken(),
-      score : score
+      username: tokenToPush,
+      score : scoreToPush
     }
   );
+  console.log("Json to validate:");
+  console.log(json);
   
   xhr.addEventListener("error", function(evt)
                        {
                          console.log("something went wrong");
+                         console.log(evt.payload);
                        });
   
   xhr.onload = function () 
@@ -27,12 +32,14 @@ var xhrRequest = function (url, type, score, callback)
 var xhrRequestForUsername = function (url, type, callback) 
 {
   var xhr = new XMLHttpRequest();
-  
+  var tokenToPush = Pebble.getWatchToken();
   var json = JSON.stringify(
     {
-      username: Pebble.getWatchToken()
+      username: tokenToPush
     }
   );
+  console.log("Json to validate:");
+  console.log(json);
   
   xhr.addEventListener("error", function(evt)
                        {
@@ -55,7 +62,7 @@ function sendScore(score)
   console.log(scoreToPush);
   
   // Construct URL
-  var url = "http://86.12.100.145:5000/json";
+  var url = "http://127.0.0.1:5000/json";
   
   // Push request to url
   xhrRequest(url, 'POST', scoreToPush,
@@ -68,7 +75,7 @@ function sendScore(score)
 }
 function getUserName()
 {
-  var url = "http://86.12.100.145:5000/json"; 
+  var url = "http://127.0.0.1:5000/json"; 
   // Push request to url
   xhrRequestForUsername(url, 'GET',
     function(responseText) 
