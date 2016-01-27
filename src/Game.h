@@ -4,7 +4,7 @@
 
 typedef struct
 {
-  int8_t gameInPlay;
+  bool gameInPlay;
   int game_time;
   uint16_t score;
   uint16_t highScore;
@@ -18,3 +18,4 @@ typedef struct
 }GameState;
 
 void initialiseGameState(GameState* state);
+void printGameState(GameState* state);

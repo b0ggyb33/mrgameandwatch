@@ -24,6 +24,7 @@ static MrGameAndWatch* mgw;
 static TextLayer *scoreLayer;
 static TextLayer *highScoreLayer;
 static TextLayer *nameLayer;
+static TextLayer *restartTextLayer;
 
 static char scoreString[10];
 static char highScoreString[10];
@@ -154,6 +155,8 @@ void triggerEndGame(Ball* object)
   renderCrash(game->crash); 
   sendScore(game->score);
   text_layer_set_text(nameLayer, friendlyNameString);
+  text_layer_set_text(restartTextLayer, "Press Up to Restart ->");
+  
 }
 
 void updateWorld()
@@ -226,9 +229,19 @@ static void reset_game_handler(ClickRecognizerRef recognizer, void *context)
 {
   if (!game->gameInPlay)
   {
-    handle_deinit();
-    handle_init();
-    updateWorld();
+    text_layer_set_text(restartTextLayer,"");
+    text_layer_set_text(nameLayer,"");
+    
+    initialiseGameState(game);
+    initialise_MisterGameAndWatch(mgw);
+    initialise_Ball(ball0, (int8_t)0, (int8_t)7, DIRECTION_RIGHT, 0);
+    initialise_Ball(ball1, (int8_t)0, (int8_t)9, DIRECTION_LEFT, 1);
+    initialise_Ball(ball2, (int8_t)0, (int8_t)11, DIRECTION_RIGHT, 2);
+    layer_mark_dirty(s_ball_layer);
+    
+    renderScores();
+    
+    app_timer_register(game->delay, updateWorld, NULL); 
   }
 }
 
@@ -255,7 +268,7 @@ static void click_config_provider(void *context)
   // Register the ClickHandlers
   window_single_click_subscribe(BUTTON_ID_SELECT, up_click_handler);
   window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
-  //window_single_click_subscribe(BUTTON_ID_UP, reset_game_handler);
+  window_single_click_subscribe(BUTTON_ID_UP, reset_game_handler);
 }
 
 void handle_init(void) 
@@ -272,10 +285,12 @@ void handle_init(void)
   // initialise score layers
   scoreLayer = text_layer_create(GRect(0,0,60,20));
   highScoreLayer = text_layer_create(GRect(144-30,0,30,20));  
-  nameLayer = text_layer_create(GRect(0,20,160,20));
+  nameLayer = text_layer_create(GRect(0,40,160,20));
+  restartTextLayer = text_layer_create(GRect(0,20,160,20));
   text_layer_set_background_color(scoreLayer, GColorClear);
   text_layer_set_background_color(highScoreLayer, GColorClear);
   text_layer_set_background_color(nameLayer, GColorClear);
+  text_layer_set_background_color(restartTextLayer, GColorClear);
   
   // Load the images
   s_background = gbitmap_create_with_resource(RESOURCE_ID_IMAGE_BG);
@@ -312,6 +327,7 @@ void handle_init(void)
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(scoreLayer));
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(highScoreLayer));
   layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(nameLayer));
+  layer_add_child(window_get_root_layer(my_window), text_layer_get_layer(restartTextLayer));
   layer_set_update_proc(s_ball_layer, renderBalls);
 
   window_stack_push(my_window, true);
