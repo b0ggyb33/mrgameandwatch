@@ -2,7 +2,8 @@ __author__ = 'b0ggyb33'
 import pygame
 import renderer
 import World
-
+pebbleSize = (144,168)
+pythonSize = (272,208)
 class MrGameAndWatch(object):
     def __init__(self):
 
@@ -11,7 +12,7 @@ class MrGameAndWatch(object):
         pygame.init()
 
         self.world = World.World()
-        self.renderer = renderer.Renderer(self.world,272, 208)
+        self.renderer = renderer.Renderer(self.world,*pythonSize)
 
         clock = pygame.time.Clock()
         done=False
