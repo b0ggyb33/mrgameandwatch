@@ -3,3 +3,6 @@ run MrGameAndWatch.py to play.
 Dependencies:
 * PyGame
 
+* Flask
+* rethinkDB
+* gunicorn

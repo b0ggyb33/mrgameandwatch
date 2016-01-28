@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<title>b0ggyb33's high scores</title>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+  <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div align="center">
+<script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+<!-- Ball -->
+<ins class="adsbygoogle"
+     style="display:block"
+     data-ad-client="ca-pub-1287330526667513"
+     data-ad-slot="6039453382"
+     data-ad-format="auto"></ins>
+<script>
+(adsbygoogle = window.adsbygoogle || []).push({});
+</script>
+</div>
+<div class="container">
+  <h2>Ball High Scores</h2>   
+  <p> 
+    The best scores achieved by the top ten players:
+  </p>                  
+  <table class="table">
+    <thead>
+      <tr>
+        <th> # </th>
+        <th>Name</th>
+        <th>Score</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for score in scores %}
+         {% if index==0 %}
+         <tr class="active">
+         {% else %}
+         <tr>
+         {% endif %}
+         <td>{{ score.index }}</td>
+         <td>{{ score.username }}</td>
+         <td>{{ score.score }}</td>
+         </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+</body>
+

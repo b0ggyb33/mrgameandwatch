@@ -4,10 +4,10 @@
 
 typedef struct
 {
-  int8_t gameInPlay;
+  bool gameInPlay;
   int game_time;
-  int score;
-  int highScore;
+  uint16_t score;
+  uint16_t highScore;
   int8_t speed;
   int8_t crash;
   int timeOfLastUpdate;
@@ -18,3 +18,4 @@ typedef struct
 }GameState;
 
 void initialiseGameState(GameState* state);
+void printGameState(GameState* state);
